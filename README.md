@@ -1,6 +1,6 @@
-# Fast Photonic-Crystal Band-Structure Prediction (TM)
+# Fast Photonic-Crystal Band-Structure Prediction (TM Mode)
 
-A compact forward-solver example using a Deep Eigenspace Network (DEN) and Rayleigh–Ritz calculation. The repository includes one trained TM checkpoint, its POD basis and FEM matrices, a training/evaluation script, a command-line predictor, and an interactive local browser demo. The raw training dataset and other experiments from the paper are not included.
+A compact forward-solver example using a Deep Eigenspace Network (DEN) and Rayleigh–Ritz calculation. The repository includes one trained TM mode checkpoint, its POD basis and FEM matrices, a training/evaluation script, a command-line predictor, and an interactive local browser demo. The raw training dataset and other experiments from the paper are not included.
 
 > **Author review:** Keep this repository private until the authors approve redistribution of the checkpoint, POD basis, and FEM matrices. MIT covers the source code only; the binary assets do not yet have a separate reuse license.
 
