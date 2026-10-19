@@ -1,0 +1,5 @@
+* text=auto
+*.slurm text eol=lf
+*.sh text eol=lf
+*.mat binary
+*.pth binary

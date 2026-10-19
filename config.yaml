@@ -1,0 +1,22 @@
+modes: 200
+width: 32
+d_in: 3
+d_out: 40
+n_layers: 4
+k_net_ls: [False, False, False, True]
+k_feats: 4
+J: 16
+k_hidden: 32
+cplx: True
+rank_ls: [30, 40, 50, 60]
+bw: 50
+Neig: 10
+k_transform: K4_transform
+
+n_grid: 16
+
+basis_path: 'data/utils/ev10-rand_uniform_basis.mat'
+basis_key: 'U'
+matrices_path: 'data/utils/ev10-uniform_matrices.mat'
+weight_path: 'saved_model/subden_rand10k_uniform_ev20_k4_BLR.pth'
+utilities_path: 'data/utils/utilities_uniform.mat'

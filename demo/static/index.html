@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TM Band Explorer</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">◈</span> DEN / RAYLEIGH–RITZ <span class="brand-tag">TM DEMO</span></div>
+      <div id="devicePill" class="device-pill">Loading solver…</div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">PHOTONIC CRYSTAL PLAYGROUND</p>
+        <h1>Draw a material.<br><em>Watch its bands move.</em></h1>
+        <p class="intro-copy">Edit the highlighted triangle in the full unit cell. Symmetry mirrors each change, and ten predicted TM bands update when you pause drawing.</p>
+      </div>
+      <div class="intro-note">
+        <span class="note-number">01 / 02 / 03</span>
+        <span>Paint the editable triangle<br>Watch symmetry propagate<br>Verify with FEM when ready</span>
+      </div>
+    </section>
+
+    <div id="alert" class="alert" role="alert" hidden></div>
+
+    <div class="workspace">
+      <section class="card editor-card" aria-labelledby="editorTitle">
+        <div class="card-heading">
+          <div><p class="section-label">DESIGN SPACE</p><h2 id="editorTitle">Full unit cell</h2></div>
+          <span class="count-badge">36 variables</span>
+        </div>
+        <p class="hint">Only the outlined lower triangle of quadrant I (top right) is editable. The other cells mirror its 36 values. Click to paint and select; drag to paint a stroke.</p>
+        <div class="canvas-frame">
+          <canvas id="cellCanvas" width="512" height="512" tabindex="0" role="grid" aria-label="Full 16 by 16 unit cell with an editable triangle in the top-right quadrant"></canvas>
+        </div>
+        <p class="editable-caption">Outlined region: editable · elsewhere: symmetry preview</p>
+        <div class="brush-control">
+          <div class="control-heading"><label for="brushSlider">Selected cell density</label><output id="brushValue">1.00</output></div>
+          <p id="selectedCell" class="selected-readout">Selected: row 1, column 16</p>
+          <input id="brushSlider" type="range" min="0" max="1" step="0.01" value="1">
+          <div class="range-labels"><span>0 · air</span><span>1 · dielectric</span></div>
+          <div class="button-row">
+            <button id="airButton" type="button" class="btn btn-small">Air · 0</button>
+            <button id="materialButton" type="button" class="btn btn-small">Material · 1</button>
+            <button id="undoButton" type="button" class="btn btn-small" disabled>Undo</button>
+            <button id="redoButton" type="button" class="btn btn-small" disabled>Redo</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="button-row actions">
+          <button id="exampleButton" type="button" class="btn">Example</button>
+          <button id="randomButton" type="button" class="btn">Random</button>
+          <button id="clearButton" type="button" class="btn">Clear</button>
+        </div>
+        <div class="button-row actions">
+          <button id="importButton" type="button" class="btn">Import JSON</button>
+          <button id="exportButton" type="button" class="btn">Export JSON</button>
+          <input id="importFile" type="file" accept=".json,application/json" hidden>
+        </div>
+        <p class="privacy-note">JSON stays in this browser; only valid design values go to the local solver.</p>
+      </section>
+
+      <div class="results-column">
+        <div class="top-results">
+          <section class="card insight-card" aria-labelledby="insightTitle">
+            <div class="card-heading">
+              <div><p class="section-label">LIVE READOUT</p><h2 id="insightTitle">Gaps between neighboring bands</h2></div>
+            </div>
+            <p id="gapSummary" class="gap-summary">Waiting for prediction.</p>
+            <p class="gap-hint">Overlap / closed gap ← 0 → open gap. Bars and values animate after each prediction.</p>
+            <div class="gap-axis" aria-hidden="true"><div class="gap-axis-track"><span id="gapScaleNegative">−</span><span>0</span><span id="gapScalePositive">+</span></div></div>
+            <div id="gapChart" class="gap-chart" role="list" aria-label="Predicted gaps between bands 1 through 10"></div>
+            <div class="readout-line"><span>Solver time</span><strong id="predictionTime">—</strong></div>
+            <div class="readout-line"><span>Total wait</span><strong id="totalWait">—</strong></div>
+            <p id="predictionStatus" class="status-line" role="status">Loading model…</p>
+          </section>
+        </div>
+
+        <section class="card plot-card" aria-labelledby="plotTitle">
+          <div class="card-heading plot-heading">
+            <div><p class="section-label">BAND STRUCTURE</p><h2 id="plotTitle">TM frequencies</h2></div>
+            <div class="legend"><span><i class="legend-line predicted"></i>DEN</span><span id="femLegend" hidden><i class="legend-line verified"></i>FEM</span></div>
+          </div>
+          <div class="k-control"><label for="kPointSelect">k points on Γ–X–M–Γ</label><select id="kPointSelect" aria-label="Number of k points"></select><span>Fewer points are faster; gaps and IoU then use the sampled path.</span></div>
+          <div class="k-control"><label for="deviceSelect">Prediction device</label><select id="deviceSelect" aria-label="Prediction device"></select><span>CUDA may need a slow first run; FEM remains on CPU.</span></div>
+          <div class="plot-wrap">
+            <svg id="bandsPlot" viewBox="0 0 900 500" role="img" aria-label="Predicted TM band structure"></svg>
+            <div id="plotTooltip" class="plot-tooltip" hidden></div>
+          </div>
+          <p id="plotFootnote" class="plot-footnote">Γ → X → M → Γ · 30 computed k points + closing Γ copied from start · 10 predicted bands · ωa / 2πc</p>
+        </section>
+
+        <section class="card verification-card" aria-labelledby="verificationTitle">
+          <div class="verification-header">
+            <div><p class="section-label">OPTIONAL CHECK</p><h2 id="verificationTitle">Finite element verification</h2><p class="hint">Checks the current design with the original FEM matrices. This can take several seconds on CPU.</p></div>
+            <button id="femButton" type="button" class="btn btn-primary" disabled>Verify current design</button>
+          </div>
+          <p id="femStatus" class="status-line" role="status">Run a prediction to enable verification.</p>
+          <div id="femResults" hidden>
+            <div class="metric-grid">
+              <div class="metric"><span>Mean absolute error</span><strong id="maeValue">—</strong></div>
+              <div class="metric"><span>Root mean square error</span><strong id="rmseValue">—</strong></div>
+              <div class="metric"><span>Mean open-gap IoU</span><strong id="iouValue">—</strong></div>
+              <div class="metric"><span>FEM time</span><strong id="femTime">—</strong></div>
+            </div>
+            <details><summary>Per-band mean absolute error</summary><div id="perBandErrors" class="band-errors"></div></details>
+          </div>
+        </section>
+      </div>
+    </div>
+    <footer>Model prediction is a surrogate estimate. Use FEM verification before interpreting a design quantitatively.</footer>
+  </main>
+</body>
+</html>
