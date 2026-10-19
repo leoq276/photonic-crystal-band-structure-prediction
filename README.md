@@ -25,6 +25,6 @@ python examples/forward_tm.py --fem --device cpu
 
 The predictor accepts `--vector-file design.json` containing exactly 36 finite values in `[0,1]`. Without it, a deterministic illustrative design is used. Results go to `outputs/forward/`.
 
-The full raw dataset is not distributed. If `ev10-rand_uniform.mat` is available at `../data/ev10-rand_uniform.mat`, run `python train_tm.py --device cuda` (or pass `--data PATH`). The script saves the checkpoint, training history, and test metrics in JSON and CSV under `outputs/training/`. The bundled four-example synthetic file is only for checking the training pipeline; it cannot reproduce paper accuracy.
+The full raw dataset is on [Google Drive (download link pending)]. Once `ev10-rand_uniform.mat` is available at `../data/ev10-rand_uniform.mat`, run `python train_tm.py --device cuda` (or pass `--data PATH`). The script saves the checkpoint, training history, and test metrics in JSON and CSV under `outputs/training/`. The bundled four-example synthetic file is only for checking the training pipeline; it cannot reproduce paper accuracy.
 
 See [DETAILS.md](DETAILS.md) for data format, evaluation protocol, demo behavior, asset provenance, and reproducibility limits. Check binary digests with `python tests/verify_assets.py`.
